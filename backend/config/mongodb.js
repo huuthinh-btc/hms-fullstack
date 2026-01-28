@@ -1,8 +1,13 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const connectDB = async () => {
-  mongoose.connection.on("connected", () => console.log("Databse Connected"));
-  await mongoose.connect(`${process.env.MONGODB_URI}/prescripto`);
+  mongoose.connection.on("connected", () =>
+    console.log("Database Connected")
+  );
+
+  await mongoose.connect(process.env.MONGODB_URI, {
+    dbName: "prescripto",
+  });
 };
 
 export default connectDB;
