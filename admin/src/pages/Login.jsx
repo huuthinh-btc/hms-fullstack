@@ -30,9 +30,9 @@ const Login = () => {
         });
         if (data.success) {
           localStorage.setItem("aToken", data.token);
-          await sleep(2000);
-          toast.success(data.message);
           setAToken(data.token);
+          toast.success(data.message);
+          navigate("/admin-dashboard"); // hoặc route admin chính
         } else {
           toast.error(data.message);
         }
