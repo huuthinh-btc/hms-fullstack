@@ -10,7 +10,7 @@ const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(false);
 
   const currencySymbol = "$";
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "https://hms-fullstack.onrender.com";
 
   const getDoctorsData = async () => {
     try {
