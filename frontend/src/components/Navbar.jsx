@@ -12,11 +12,6 @@ const Navbar = () => {
     navigate("/login");
     localStorage.removeItem("token");
   };
-  useEffect(() => {
-    if (!token) {
-      navigate("/login");
-    }
-  }, [token]);
   return (
     <div className="flex items-center justify-between text-lg1 py-4 mb-5 border-b border-b-gray-400">
       <img
