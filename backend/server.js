@@ -13,9 +13,20 @@ const port = process.env.PORT || 4000;
 connectDB();
 connectCloudinary();
 
-// ✅ CORS - Cho phép tất cả origins (để test)
+// ✅ CORS Configuration - Allow all Vercel deployments
 app.use(cors({
-  origin: true, // Tạm thời cho phép mọi origin
+  origin: function(origin, callback) {
+    // Cho phép requests không có origin (mobile apps, Postman, curl)
+    if (!origin) return callback(null, true);
+    
+    // Cho phép tất cả Vercel deployments
+    if (origin.includes('vercel.app') || origin.includes('localhost')) {
+      return callback(null, true);
+    }
+    
+    // Cho phép tất cả origins khác (để test)
+    callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'aToken', 'dToken', 'atoken', 'dtoken']
@@ -24,32 +35,17 @@ app.use(cors({
 // Middlewares
 app.use(express.json());
 
-// Health check endpoint
-app.get("/", (req, res) => {
-  res.status(200).json({ 
-    success: true,
-    message: "API Working",
-    timestamp: new Date().toISOString()
-  });
-});
-
 // Api Endpoints
 app.use("/api/admin", adminRouter);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/user", userRouter);
 
-// Error handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
-    success: false, 
-    message: err.message || 'Something went wrong!' 
-  });
+app.get("/", (req, res) => {
+  res.status(200).send("API Working");
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
-  console.log("CORS enabled for all origins");
 });
