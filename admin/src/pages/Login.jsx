@@ -32,7 +32,7 @@ const Login = () => {
           localStorage.setItem("aToken", data.token);
           setAToken(data.token);
           toast.success(data.message);
-          navigate("/admin-dashboard"); // hoặc route admin chính
+          navigate("/"); // hoặc route admin chính
         } else {
           toast.error(data.message);
         }
@@ -43,12 +43,12 @@ const Login = () => {
         });
         if (data.success) {
           localStorage.setItem("dToken", data.token);
-          navigate("/doctor");
-          await sleep(2000);
           setDToken(data.token);
-        } else {
-          toast.error(data.message);
-        }
+          toast.success("Doctor Logged in Successfully");
+          navigate("/doctor");
+      } else {
+        toast.error(data.message);
+      }
       }
     } catch (error) {
       console.error(error);
