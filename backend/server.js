@@ -29,7 +29,7 @@ app.use(cors({
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'aToken', 'dToken', 'atoken', 'dtoken']
+  allowedHeaders: ['Content-Type', 'Authorization', 'aToken','token', 'dToken', 'atoken', 'dtoken']
 }));
 
 // Middlewares
@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
   res.status(200).send("API Working");
 });
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () => {
   console.log("Server running on port", PORT);
