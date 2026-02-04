@@ -31,7 +31,7 @@ const MyAppointments = () => {
   const getUsersAppointments = async () => {
     try {
       const { data } = await axios.get(backendUrl + "/api/user/appointments", {
-        headers: { token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (data.success) {
         setAppointments(data.appointments.reverse());
@@ -47,7 +47,7 @@ const MyAppointments = () => {
       const { data } = await axios.post(
         backendUrl + "/api/user/cancel-appointment",
         { appointmentId },
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
         toast.success(data.message);
@@ -75,7 +75,7 @@ const MyAppointments = () => {
           const { data } = await axios.post(
             backendUrl + "/api/user/verifyRazorpay",
             response,
-            { headers: { token } }
+            { headers: { Authorization: `Bearer ${token}` } }
           );
           if (data.success) {
             getUsersAppointments();
@@ -99,7 +99,7 @@ const MyAppointments = () => {
         backendUrl + "/api/user/payment-razorpay",
         { appointmentId },
         {
-          headers: { token },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       if (data.success) {

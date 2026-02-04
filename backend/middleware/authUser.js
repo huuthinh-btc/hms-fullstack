@@ -1,31 +1,27 @@
 import jwt from "jsonwebtoken";
 
-const authUser = async (req, res, next) => {
+const authUser = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    const legacyToken = req.headers.token; // frontend cũ gửi
 
-    // Nhận cả 2 kiểu: Bearer (mới) và token (cũ)
-    let token = null;
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      token = authHeader.split(" ")[1];
-    } else if (legacyToken) {
-      token = legacyToken;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ success: false, message: "No token provided" });
     }
 
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized Access denied",
-      });
+    const token = authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Gắn user vào request
+    req.user = decoded;
+
+    if (decoded.role !== "user") {
+      return res.status(403).json({ success: false, message: "Forbidden - User only" });
     }
 
-    const token_decode = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = token_decode;
     next();
   } catch (error) {
-    console.error(error);
-    res.status(401).json({ success: false, message: error.message });
+    return res.status(401).json({ success: false, message: "Invalid token" });
   }
 };
 

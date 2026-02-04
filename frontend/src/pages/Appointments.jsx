@@ -113,7 +113,7 @@ const Appointments = () => {
           slotDate,
           slotTime,
         },
-        { headers: { token } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.success) {
