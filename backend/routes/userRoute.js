@@ -30,5 +30,5 @@ userRouter.get("/appointments", authUser, listAppointment);
 userRouter.post("/cancel-appointment", authUser, cancelAppointment);
 userRouter.post("/payment-razorpay", authUser, paymentRazorpay);
 userRouter.post("/verifyRazorpay", authUser, verifyRazorpay);
-
+userRouter.delete("/appointments/:id", authUser, cancelAppointmentById);
 export default userRouter;

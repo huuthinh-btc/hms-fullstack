@@ -1,25 +1,31 @@
 import jwt from "jsonwebtoken";
 
-// Doctor Authentication Middleware
 const authDoctor = async (req, res, next) => {
   try {
-    // ✅ FIX: Đọc cả 2 format (lowercase và camelCase)
-    const dtoken = req.headers.dtoken || req.headers.dToken;
-    
-    if (!dtoken) {
-      return res.json({
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
         success: false,
         message: "Unauthorized Access denied",
       });
     }
-    
-    const token_decode = jwt.verify(dtoken, process.env.JWT_SECRET);
-    req.body.docId = token_decode.id;
-    
+
+    const token = authHeader.split(" ")[1];
+    const token_decode = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (token_decode.role !== "doctor") {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden - Doctor only",
+      });
+    }
+
+    req.doctor = token_decode;
     next();
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: error.message });
+    res.status(401).json({ success: false, message: error.message });
   }
 };
 

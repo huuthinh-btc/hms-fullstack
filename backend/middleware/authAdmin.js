@@ -3,29 +3,30 @@ import jwt from "jsonwebtoken";
 // Admin Authentication Middleware
 const authAdmin = async (req, res, next) => {
   try {
-    // ✅ FIX: Đọc cả 2 format (lowercase và camelCase)
-    const atoken = req.headers.atoken || req.headers.aToken;
-    
-    if (!atoken) {
-      return res.json({
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
         success: false,
         message: "Unauthorized Access denied",
       });
     }
-    
-    const token_decode = jwt.verify(atoken, process.env.JWT_SECRET);
-    
-    if (token_decode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
-      return res.json({
+
+    const token = authHeader.split(" ")[1];
+    const token_decode = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (token_decode.role !== "admin") {
+      return res.status(403).json({
         success: false,
-        message: "Invalid Credentials",
+        message: "Forbidden - Admin only",
       });
     }
-    
+
+    req.admin = token_decode;
     next();
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: error.message });
+    res.status(401).json({ success: false, message: error.message });
   }
 };
 
