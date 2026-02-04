@@ -228,6 +228,33 @@ const cancelAppointment = async (req, res) => {
   }
 };
 
+// API to cancel Appointment by ID (for security test - TC_SEC_03)
+const cancelAppointmentById = async (req, res) => {
+  try {
+    const { id } = req.params;        // appointmentId trên URL
+    const userId = req.user.id;       // lấy từ token (authUser middleware)
+
+    const appointmentData = await appointmentModel.findById(id);
+
+    if (!appointmentData) {
+      return res.status(404).json({ success: false, message: "Appointment not found" });
+    }
+
+    // ❌ Check quyền sở hữu
+    if (String(appointmentData.userId) !== String(userId)) {
+      return res.status(403).json({ success: false, message: "Forbidden: Not owner of resource" });
+    }
+
+    await appointmentModel.findByIdAndUpdate(id, { cancelled: true });
+
+    res.json({ success: true, message: "Appointment Cancelled" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 // const razorpayInstance = new razorpay({
 //   key_id: process.env.RAZORPAY_KEY_ID,
 //   key_secret: process.env.RAZORPAY_KEY_SECRET,
@@ -289,6 +316,7 @@ export {
   bookAppointment,
   listAppointment,
   cancelAppointment,
+  cancelAppointmentById,
   paymentRazorpay,
   verifyRazorpay,
 };
