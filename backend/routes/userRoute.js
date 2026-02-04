@@ -7,6 +7,7 @@ import {
   bookAppointment,
   listAppointment,
   cancelAppointment,
+  cancelAppointmentById,
   paymentRazorpay,
   verifyRazorpay,
 } from "../controllers/userController.js";
